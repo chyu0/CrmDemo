@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- Head -->
+<head>
+<meta charset="utf-8" />
+<title>会员信息</title>
+<meta name="description" content="simple and responsive tables" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!--Basic Styles-->
+<link href="/template/static/assets/css/bootstrap.min.css"
+	rel="stylesheet" />
+
+<!--Fonts-->
+<link
+	href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300"
+	rel="stylesheet" type="text/css">
+
+<!--Beyond styles-->
+<link id="beyond-link" href="/template/static/assets/css/beyond.min.css"
+	rel="stylesheet" />
+</head>
+<!-- /Head -->
+<!-- Body -->
+<body>
+	<!-- /Navbar -->
+	<!-- Main Container -->
+	<div class="main-container container-fluid">
+		<!-- Page Container -->
+		<div class="page-container">
+			<!-- Page Sidebar -->
+			<div class="page-body">
+				<div class="row">
+					<div class="col-xs-12 col-md-12 col-sm-12">
+						<div class="well with-header  with-footer">
+							<div class="header bg-blue">
+								会员列表 （共${page.getTotalCount()!0}个记录） <label for="definpu">手机号过滤</label> <input type="text"
+									id="_mobile" placeholder="按手机号码过滤" class="input-sm"
+									value="${(mobile?substring(1,mobile?length-1))!''}"> <label for="definpu">用户id过滤</label><input
+									type="text" id="_userId" placeholder="按用户id过滤" class="input-sm"
+									value="${(userId?substring(1,userId?length-1))!''}"> <a
+									href="#" id="find" class="btn btn-default" class=""
+									style="float: rigth">查询</a> <a href="/user/toEdit"
+									class="btn btn-default navbar-right">注册</a>
+
+							</div>
+							<table class="table table-hover">
+								<thead class="bordered-darkorange">
+									<tr>
+										<th>序号</th>
+										<th>会员id</th>
+										<th>手机号码</th>
+										<th>昵称</th>
+										<th>真实姓名</th>
+										<th>性别</th>
+										<th>生日</th>
+										<th>用户图像</th>
+										<th>积分</th>
+										<th>创建时间</th>
+										<th>更新时间</th>
+										<th>操作</th>
+									</tr>
+								</thead>
+								<#if page.getItems()??&&page.getItems()?size gt 0>
+								<tbody>
+									<#list page.getItems() as item>
+									<tr>
+										<th>${(item_index!0)+((page.getPageNo()!1)-1)*(page.getPageSize()!5)+1}</th>
+										<th>${item.userId!''}</th>
+										<th>${item.mobile!''}</th>
+										<th>${item.nickName!''}</th>
+										<th>${item.realName!''}</th>
+										<th>${(Sex.getSexValueByFlag(item.sex!0))!'未知'}</th>
+										<th>${item.birthday!''}</th>
+										<th><img src="/template/static/upload/${item.headPic!''}"
+											width="50" height="50"></th>
+										<th>${item.point!''}</th>
+										<th>${item.createTime!''}</th>
+										<th>${item.updateTime!''}</th>
+										<th><a href="/user/toEdit?id=${item.id!''}"
+											class="btn btn-default">修改</a> <a href="#"
+											class="btn btn-default changePoint"
+											title="${(item.userId)!''}">修改积分</a>
+									</tr>
+									</#list>
+								</tbody>
+								<#else>
+								<tbody>
+									<tr>
+										<td>没有任何数据</td>
+									</tr>
+								</tbody>
+								</#if>
+							</table>
+							<#include "pagination.html">
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="/template/static/assets/js/jquery-2.0.3.min.js"></script>
+	<script src="/template/static/assets/js/bootstrap.min.js"></script>
+
+	<!--Page Related Scripts-->
+	<script src="/template/static/assets/js/bootbox/bootbox.js"></script>
+	<script src="/template/static/assets/js/jquery.js"></script>
+	<script src="/template/static/assets/js/beyond.min.js"></script>
+
+	<script type="text/javascript">
+		$(".changePoint")
+				.bind(
+						'click',
+						function() {
+							var userId = $(this).attr("title");
+							bootbox
+									.dialog({
+										title : "修改积分",
+										message : "<form action='/user/changePoint' method='post'><input type='hidden' id='userId' name='userId' value="+userId+"><div class='row'><div class='col-md-12'><div class='form-group'><input type='text' name='point' class='form-control' id='point' placeholder='积分数' required></div><div class='form-group'><select id='type' name='type' style='width: 100%;' required><option value='0' selected='selected'>减积分</option><option value='1'>加积分</option></select></div><div class='form-group'><textarea class='form-control' name='pointDesc' id='pointDesc' placeholder='积分描述'rows='5'></textarea></div></div></div></form>",
+										buttons : {
+											success : {
+												label : "提交",
+												className : "btn-default",
+												callback : function() {
+													var point = $("#point")
+															.val();
+													var userId = $("#userId")
+															.val();
+													var type = $("#type").val();
+													var pointDesc = $(
+															"#pointDesc").val();
+													var re = /^[0-9]{1,4}$/
+													if (!re.test(point)) {
+														bootbox
+																.alert("积分数必须是正整数，并且不能超过4位数");
+														return false;
+													}
+													var userPoint = {
+														'userId' : userId,
+														'type' : type,
+														'point' : point,
+														'pointDesc' : pointDesc
+													};
+													$
+															.ajax({
+																url : "/user/changePoint",
+																data : userPoint,
+																success : function(
+																		data) {
+															alert(data.msg);
+															location.href = "/user/userList";
+																}
+															});
+													/* $.getJSON("/user/changePoint",userPoint,function() {
+															bootbox.alert("修改积分成功");
+													}); */
+												}
+											}
+										}
+									});
+						});
+
+		$("#find").bind(
+				'click',
+				function() {
+					location.href = "/user/userList?userId="
+							+ $("#_userId").val() + "&mobile="
+							+ $("#_mobile").val();
+				});
+	</script>
+</body>
+<!--  /Body -->
+</html>

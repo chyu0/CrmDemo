@@ -1,0 +1,17 @@
+<#if page.getItems()??>
+<div class="dataTables_paginate paging_bootstrap"
+	id="simpledatatable_paginate">
+	<nav style="text-align: center">
+		<ul class="pagination" style="margin: 10px">
+			<li class="prev <#if !page.isHavePrePage()> disabled</#if>"><a
+				href="/user/userList?pageNo=<#if page.getPageNo()?? && page.getPageNo() lte 1>1<#else>${((page.getPageNo())!2)-1}</#if>">上一页</a></li>
+
+			<li><a href="#">第${page.getPageNo()!1}页/共${page.getPageCount()!1}页</a></li>
+
+			<li class="next <#if !page.isHaveNextPage()>disabled</#if>"><a
+				href="/user/userList?pageNo=<#if page.getPageNo()?? && page.getPageNo() gte page.getPageCount()>${(page.getPageCount())!1}<#else>${((page.getPageNo())!0)+1}</#if>">下一页</a>
+			</li>
+		</ul>
+	</nav>
+</div>
+</#if>

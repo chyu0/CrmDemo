@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<setting name="logPrefix" value="dao." />
+	</settings>
+	<typeAliases>
+		<typeAlias alias="UserInfo" type="com.sqq.crm.demo.model.UserInfo" />
+		<typeAlias alias="UserPoint" type="com.sqq.crm.demo.model.UserPoint" />
+	</typeAliases>
+	<mappers>
+		<mapper resource="mapper/userinfo-mapper.xml" />
+		<mapper resource="mapper/userpoint-mapper.xml" />
+	</mappers>
+</configuration>
