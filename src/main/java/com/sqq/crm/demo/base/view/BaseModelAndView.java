@@ -14,6 +14,9 @@ import com.sqq.crm.demo.util.PackageScanUtil;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.TemplateModelException;
 
+/**
+ * 添加静态类到freemarker中， 方便freemarker可以直接通过类名访问静态方法
+ */
 public class BaseModelAndView extends ModelAndView {
 
     private static final Set<String> packages = new LinkedHashSet<String>();
